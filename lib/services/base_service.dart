@@ -1,5 +1,5 @@
 class BaseService {
-  final _baseUrl = "http://localhost:5000";
+  final _baseUrl = "https://api.centrii.com";
 
   String getBaseUrl() {
     return this._baseUrl;

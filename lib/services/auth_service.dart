@@ -6,7 +6,7 @@ import 'package:centrii_user/services/base_service.dart';
 class AuthService extends BaseService {
   static final _baseUrl = BaseService().getBaseUrl();
 
-  static Future<bool> login(String email, String password) async {
+  static Future<String> login(String email, String password) async {
     try {
       final uri = Uri.parse('${_baseUrl}/v1/auth/login/user');
       final body = {
@@ -18,16 +18,14 @@ class AuthService extends BaseService {
         body: jsonEncode(body),
         headers: {'Content-type': 'application/json'},
       );
-      print(response.body);
       if (response.statusCode == 200) {
-        return true;
+        return response.body;
       } else {
-        print("Error: ${response.statusCode} - ${response.body}");
-        return false;
+        return response.body;
       }
     } catch (e) {
       print("Exception during login: $e");
-      return false;
+      return "Login service error";
     }
   }
 

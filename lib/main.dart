@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:centrii_user/screens/landing_page.dart';
-import 'package:centrii_user/screens/dashboard_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
+      home: LandingPage(),
     );
   }
 }

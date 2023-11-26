@@ -1,6 +1,9 @@
 import 'package:centrii_user/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:centrii_user/screens/main_page.dart';
+
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
 
@@ -16,7 +19,7 @@ class _LandingPageState extends State<LandingPage>
   @override
   void initState() {
     super.initState();
-
+    CheckToken();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
@@ -101,6 +104,22 @@ class _LandingPageState extends State<LandingPage>
 
   void navigateToLoginPage() async {
     final route = MaterialPageRoute(builder: (context) => LoginPage());
+
+    await Navigator.push(context, route);
+  }
+
+  void CheckToken() async {
+    // Create storage
+    final storage = new FlutterSecureStorage();
+
+    String? value = await storage.read(key: "CERT");
+    if (value != null) {
+      navigateToMainPage();
+    }
+  }
+
+  Future<void> navigateToMainPage() async {
+    final route = MaterialPageRoute(builder: (context) => MainPage());
 
     await Navigator.push(context, route);
   }

@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'package:centrii_user/screens/main_page.dart';
 import 'package:centrii_user/screens/registration_page.dart';
 import 'package:centrii_user/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -112,12 +116,19 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> submitData() async {
     final email = emailController.text;
     final password = passwordController.text;
+    final storage = new FlutterSecureStorage();
 
-    final isSuccess = await AuthService.login(email, password);
+    final response = await AuthService.login(email, password);
+    final Map<String, dynamic> responseData = json.decode(response);
+
+    final bool isSuccess = responseData['status'];
     if (isSuccess) {
-      print("success");
+      await storage.write(key: 'CERT', value: responseData['token']);
+      showResultDialog(context, "Login Successful", "Welcome back!");
+      navigateToMainPage();
     } else {
-      print("failed");
+      final String error = responseData['error'];
+      showResultDialog(context, "Login Failed", error);
     }
   }
 
@@ -125,5 +136,47 @@ class _LoginPageState extends State<LoginPage> {
     final route = MaterialPageRoute(builder: (context) => RegistrationPage());
 
     await Navigator.push(context, route);
+  }
+
+  Future<void> navigateToMainPage() async {
+    final route = MaterialPageRoute(builder: (context) => MainPage());
+
+    await Navigator.push(context, route);
+  }
+
+  void showResultDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          backgroundColor: Color(0xFFFFB800), // Set the background color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          titleTextStyle: TextStyle(
+            color: Colors.white, // Set the title text color
+            fontWeight: FontWeight.bold,
+          ),
+          contentTextStyle: TextStyle(
+            color: Colors.white, // Set the content text color
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.white, // Set the button text color
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
